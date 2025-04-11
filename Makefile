@@ -3,17 +3,15 @@ NAME = so_long
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 INCLUDES = -I ./libft -I ./minilibx
-# AUDIO
-INCLUDES += -I/opt/homebrew/include/SDL2
+
 # Options de lien
-LDFLAGS = -L/opt/homebrew/lib -lSDL2 -lSDL2_mixer
+LDFLAGS = -L ./minilibx
 
 # Répertoire des objets
 OBJ_DIR = obj
 
 # Sources
-SRCS =	src/audio.c \
-		src/check_rectangular_map.c \
+SRCS =	src/check_rectangular_map.c \
 		src/check_valid_path.c \
 		src/check_wall_contour.c \
 		src/enemies.c \

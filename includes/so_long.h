@@ -6,7 +6,7 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 01:58:23 by grohr             #+#    #+#             */
-/*   Updated: 2025/03/16 16:31:44 by grohr            ###   ########.fr       */
+/*   Updated: 2025/03/24 17:55:19 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,7 @@
 # include <stdlib.h>
 # include <fcntl.h>
 # include <stdbool.h>
-# include </opt/homebrew/include/SDL2/SDL.h>
-# include </opt/homebrew/include/SDL2/SDL_mixer.h>
+# include <stdio.h>
 
 # define WIDTH 1200
 # define HEIGHT 1000
@@ -51,7 +50,6 @@ typedef struct s_game
     void    *enemy_img; // Nouvelle image pour l'ennemi
     int     img_width;
     int     img_height;
-    Mix_Music *music;
     bool    keys[128];
     int     move_count;
     t_enemy *enemies; // Tableau d'ennemis
@@ -85,9 +83,5 @@ int     wall_contour(char **map);
 int     valid_path(t_game *game, char **map_copy);
 void    free_map(char **map);
 char    **copy_map(char **map);
-
-// Audio
-void    init_audio(t_game *game);
-void    cleanup_audio(t_game *game);
 
 #endif

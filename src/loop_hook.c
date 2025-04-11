@@ -6,7 +6,7 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 17:28:36 by grohr             #+#    #+#             */
-/*   Updated: 2025/03/16 16:28:50 by grohr            ###   ########.fr       */
+/*   Updated: 2025/03/24 17:46:37 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int loop_hook(t_game *game)
     render_map(game);
     
     // Ajouter un petit délai pour éviter une utilisation excessive du CPU
-    usleep(50000); // 50ms
+    usleep(5000); // 50ms
     
     return (0);
 }
