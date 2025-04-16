@@ -5,78 +5,62 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/14 01:32:29 by grohr             #+#    #+#             */
-/*   Updated: 2025/03/24 17:54:57 by grohr            ###   ########.fr       */
+/*   Created: 2025/04/16 14:19:48 by grohr             #+#    #+#             */
+/*   Updated: 2025/04/16 16:08:09 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/so_long.h"
+#include "../inc/so_long.h"
 
-void render_game_over(t_game *game)
+void	render_tile(t_game *game, t_img *img, int x, int y)
 {
-    mlx_clear_window(game->mlx, game->win);
-    mlx_string_put(game->mlx, game->win, WIDTH/2 - 50, HEIGHT/2, 0xFF0000, "GAME OVER!");
-    mlx_string_put(game->mlx, game->win, WIDTH/2 - 80, HEIGHT/2 + 20, 0xFFFFFF, "Caught by enemy!");
+	mlx_put_image_to_window(game->mlx, game->win, img->img, x * IMG_SIZE,
+		y * IMG_SIZE);
 }
 
-void render_map(t_game *game)
+static void	render_elements(t_game *game, int x, int y)
 {
-    int x;
-    int y;
-    int i;
-    int size = 50; // Taille d'affichage souhaitée
-    
-    y = 0;
-    mlx_clear_window(game->mlx, game->win);
-    
-    // Si game over, afficher l'écran de fin
-    if (game->game_over)
-    {
-        render_game_over(game);
-        return;
-    }
-    
-    // Rendu de la carte
-    while (game->map[y])
-    {
-        x = 0;
-        while (game->map[y][x])
-        {
-            // D'abord, afficher les dalles partout
-            mlx_put_image_to_window(game->mlx, game->win, game->dalle_img, x * size, y * size);
-            
-            // Ensuite, superposer les autres éléments
-            if (game->map[y][x] == '1')
-                mlx_put_image_to_window(game->mlx, game->win, game->wall_img, x * size, y * size);
-            else if (game->map[y][x] == 'C')
-                mlx_put_image_to_window(game->mlx, game->win, game->item_img, x * size, y * size);
-            else if (game->map[y][x] == 'E')
-                mlx_put_image_to_window(game->mlx, game->win, game->exit_img, x * size, y * size);
-            x++;
-        }
-        y++;
-    }
-    
-    // Afficher le joueur à sa position actuelle
-    mlx_put_image_to_window(game->mlx, game->win, game->dalle_img, 
-                           game->player_x * size, game->player_y * size);
-    mlx_put_image_to_window(game->mlx, game->win, game->player_img, 
-                           game->player_x * size, game->player_y * size);
-    
-    // Afficher les ennemis
-    for (i = 0; i < game->enemy_count; i++)
-    {
-        mlx_put_image_to_window(game->mlx, game->win, game->dalle_img, 
-                              game->enemies[i].x * size, game->enemies[i].y * size);
-        mlx_put_image_to_window(game->mlx, game->win, game->enemy_img, 
-                              game->enemies[i].x * size, game->enemies[i].y * size);
-    }
+	if (game->map[y][x] == '1')
+		render_tile(game, &game->wall, x, y);
+	else if (game->map[y][x] == 'C')
+		render_tile(game, &game->collectible, x, y);
+	if (game->map[y][x] == 'E' && !(x == game->player_x && y == game->player_y))
+		render_tile(game, &game->exit, x, y);
+	if (x == game->player_x && y == game->player_y)
+		render_tile(game, &game->player, x, y);
+}
 
-    // Déplacer les ennemis après chaque rendu
-    move_enemies(game);
-    
-    // Afficher le compteur de mouvements à l'écran
-    char move_count_str[20];
-    sprintf(move_count_str, "MOVES: %d", game->move_count);
-    mlx_string_put(game->mlx, game->win, 10, 20, 0x000000, move_count_str);
+static void	render_moves_counter(t_game *game)
+{
+	char	*moves_str;
+	char	*prefix;
+	char	*full_str;
+
+	prefix = "Moves: ";
+	moves_str = ft_itoa(game->moves);
+	full_str = ft_strjoin(prefix, moves_str);
+	if (!full_str)
+		return ;
+	mlx_string_put(game->mlx, game->win, 10, 20, 0xFFFFFF, full_str);
+	free(moves_str);
+	free(full_str);
+}
+
+void	render_game(t_game *game)
+{
+	int	x;
+	int	y;
+
+	mlx_clear_window(game->mlx, game->win);
+	y = -1;
+	while (++y < game->map_height)
+	{
+		x = -1;
+		while (++x < game->map_width)
+		{
+			render_tile(game, &game->floor, x, y);
+			render_elements(game, x, y);
+		}
+	}
+	render_moves_counter(game);
 }

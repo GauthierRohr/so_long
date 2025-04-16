@@ -5,54 +5,64 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/13 18:34:53 by grohr             #+#    #+#             */
-/*   Updated: 2025/03/24 17:53:33 by grohr            ###   ########.fr       */
+/*   Created: 2025/04/16 14:17:03 by grohr             #+#    #+#             */
+/*   Updated: 2025/04/16 16:33:39 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/so_long.h"
+#include "../inc/so_long.h"
 
-int close_window(t_game *game)
+void	print_stats(t_game *game)
 {
-    // Libérer la mémoire des ennemis
-    if (game->enemies)
-        free(game->enemies);
-    
-    if (game->mlx)
-    {
-        if (game->win)
-            mlx_destroy_window(game->mlx, game->win);
-        // Only call mlx_destroy_display on Linux
-        // #ifdef __linux__
-        //     mlx_destroy_display(game->mlx);
-        // #endif
-        free(game->mlx);
-    }
-    exit(0);
+	ft_printf("\033[2A");
+	ft_printf("\033[2K");
+	ft_printf("🍒 Collectible %d/%d\n", game->collected, game->collectibles);
+	ft_printf("\033[2K");
+	ft_printf("👟 Moves: %d\n", game->moves);
 }
 
-int main(int ac, char **av)
+static int	check_file_extension(char *filename)
 {
-    if (ac < 2)
-        return (1);
-    t_game game;
+	int	len;
 
-    game.mlx = mlx_init();
-    game.win = mlx_new_window(game.mlx, WIDTH, HEIGHT, "So Long");
-    game.map = parse_map(av[1], &game);
-    if (!game.map)
-        return (1);
-    game.collected = 0;
-    game.move_count = 0; // Initialiser le compteur de mouvements
-    game.enemies = NULL;
-    game.game_over = false;
+	len = ft_strlen(filename);
+	if (len < 5)
+		return (0);
+	if (filename[len - 4] != '.' || filename[len - 3] != 'b'
+		|| filename[len - 2] != 'e' || filename[len - 1] != 'r')
+		return (0);
+	return (1);
+}
 
-    load_textures(&game); // Load textures
-    init_enemies(&game);  // Initialiser les ennemis
-    render_map(&game);    // Render the map with textures
-    
-    mlx_hook(game.win, 17, 0, (int (*)())close_window, &game);
-    mlx_key_hook(game.win, handle_key, &game);
-    mlx_loop_hook(game.mlx, loop_hook, &game); // Nouvelle fonction pour le rafraîchissement automatique
-    mlx_loop(game.mlx);
+// Fonction pour gérer les erreurs et libérer la mémoire avant de quitter
+static void	handle_error(t_game *game, char *message)
+{
+	free_game(game);
+	exit_error(message);
+}
+
+int	main(int argc, char **argv)
+{
+	t_game	game;
+
+	if (argc != 2)
+		exit_error("Usage: ./so_long map.ber");
+	if (!check_file_extension(argv[1]))
+		exit_error("Error\nFile must have .ber extension");
+	init_game(&game);
+	if (!read_map(argv[1], &game))
+		handle_error(&game, "Error\nFailed to read map");
+	if (!validate_map(&game))
+		handle_error(&game, "Error\nInvalid map");
+	if (!check_path(&game))
+		handle_error(&game, "Error\nNo valid path");
+	if (!init_window(&game))
+		handle_error(&game, "Error\nFailed to initialize window");
+	if (!init_images(&game))
+		handle_error(&game, "Error\nFailed to initialize images");
+	render_game(&game);
+	ft_printf("\n\n\n");
+	setup_hooks(&game);
+	mlx_loop(game.mlx);
+	return (0);
 }

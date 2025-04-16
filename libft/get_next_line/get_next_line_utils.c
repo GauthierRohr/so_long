@@ -6,55 +6,74 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 14:17:23 by grohr             #+#    #+#             */
-/*   Updated: 2025/03/13 17:52:26 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/16 16:05:24 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-// ft_add_line :
-// --> Reads a line from fd
-// --> Returns a string containing this line.
-//
-// read(int fd, void *buffer, size_t count) :
-// --> reads fd for a "count" numbers of characters
-// --> returns the ssize_t of byte read from file descriptor
-// --> allocates *buffer with the content read from fd.
-//
-// Each call of read() keeps the actual reading position thanks to
-// the internal kernel mechanism for managing file descriptors.
-
-char	*ft_add_line(int fd, char *str)
+size_t	ft_strlen_g(char *string)
 {
-	char	*buffer;
-	ssize_t	bytes_read;
+	size_t	i;
 
-	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (!buffer)
-		return (NULL);
-	bytes_read = 1 ;
-	while ((ft_strchr_g(str, '\n') == 0) && bytes_read > 0)
-	{
-		bytes_read = read(fd, buffer, BUFFER_SIZE);
-		if (bytes_read == -1)
-		{
-			free(str);
-			free(buffer);
-			return (NULL);
-		}
-		buffer[bytes_read] = '\0';
-		str = ft_strjoin_g(str, buffer);
-	}
-	free(buffer);
-	return (str);
+	i = 0;
+	if (!string)
+		return (0);
+	while (string[i])
+		i++;
+	return (i);
 }
 
-// Extracts the next line from str
-// -->returns a new str (next_str) with the next line of text.
+// strchr -> looking for '\n' in the line we want to read.
+
+char	*ft_strchr_g(char *str, int c)
+{
+	size_t	i;
+
+	if (!str)
+		return (0);
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == (char)c)
+			return ((char *)&str[i]);
+		i++;
+	}
+	return (0);
+}
+
+char	*ft_strjoin_g(char *s1, char *s2)
+{
+	size_t	i;
+	size_t	j;
+	char	*out;
+
+	if (!s1)
+	{
+		s1 = (char *)malloc(sizeof(char) * 1);
+		s1[0] = '\0';
+	}
+	if (!s2)
+		return (NULL);
+	out = (char *)malloc(sizeof(char) * (ft_strlen_g(s1) + ft_strlen_g(s2)
+				+ 1));
+	if (out == NULL)
+		return (NULL);
+	i = 0;
+	j = 0;
+	while (s1[i])
+		out[j++] = s1[i++];
+	i = 0;
+	while (s2[i])
+		out[j++] = s2[i++];
+	out[j] = '\0';
+	free(s1);
+	return (out);
+}
 
 char	*ft_next_line(char *str)
 {
-	char	*next_str;
+	char	*next;
 	int		i;
 
 	i = 0;
@@ -62,34 +81,29 @@ char	*ft_next_line(char *str)
 		return (NULL);
 	while (str[i] && str[i] != '\n')
 		i++;
-	next_str = (char *)malloc(sizeof(char) * (i + 2));
-	if (!next_str)
+	next = malloc(sizeof(char) * (i + 2));
+	if (!next)
 		return (NULL);
 	i = 0;
 	while (str[i] && str[i] != '\n')
 	{
-		next_str[i] = str[i];
+		next[i] = str[i];
 		i++;
 	}
 	if (str[i] == '\n')
-	{
-		next_str[i] = '\n';
-		i++;
-	}
-	next_str[i] = '\0';
-	return (next_str);
+		next[i++] = '\n';
+	next[i] = '\0';
+	return (next);
 }
-
-// Removes the next line of text from a string
-// and returns a new string containing the remaining text
 
 char	*ft_remove_str_1st_line(char *line)
 {
-	char	*string;
+	char	*new_str;
 	int		i;
 	int		j;
 
 	i = 0;
+	j = 0;
 	while (line[i] && line[i] != '\n')
 		i++;
 	if (!line[i])
@@ -97,17 +111,13 @@ char	*ft_remove_str_1st_line(char *line)
 		free(line);
 		return (NULL);
 	}
-	string = (char *)malloc(sizeof(char) * (ft_strlen_g(line) + 1 - i));
-	if (!string)
-	{
-		free(line);
-		return (NULL);
-	}
+	new_str = malloc(sizeof(char) * (ft_strlen_g(line) - i + 1));
+	if (!new_str)
+		return (free(line), NULL);
 	i++;
-	j = 0;
 	while (line[i])
-		string[j++] = line[i++];
-	string[j] = '\0';
+		new_str[j++] = line[i++];
+	new_str[j] = '\0';
 	free(line);
-	return (string);
+	return (new_str);
 }

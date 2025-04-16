@@ -5,109 +5,67 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/20 14:16:58 by grohr             #+#    #+#             */
-/*   Updated: 2025/03/13 17:52:04 by grohr            ###   ########.fr       */
+/*   Created: 2025/04/16 15:46:58 by grohr             #+#    #+#             */
+/*   Updated: 2025/04/16 16:05:14 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-// Known functions :
-// ft_strlen
-// ft_strchr
-// ft_strjoin
+static char	*g_static_str = NULL;
 
-size_t	ft_strlen_g(char *string)
+char	*ft_add_line(int fd, char *str)
 {
-	size_t	i;
+	char	*buffer;
+	ssize_t	bytes_read;
 
-	i = 0;
-	if (!string)
-		return (0);
-	while (string[i])
-		i++;
-	return (i);
-}
-
-//strchr -> looking for '\n' in the line we want to read.
-
-char	*ft_strchr_g(char *str, int c)
-{
-	size_t	i;
-
-	if (!str)
-		return (0);
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == (char) c)
-			return ((char *)&str[i]);
-		i++;
-	}
-	return (0);
-}
-
-char	*ft_strjoin_g(char *s1, char *s2)
-{
-	size_t		i;
-	size_t		j;
-	char		*out;
-
-	if (!s1)
-	{
-		s1 = (char *)malloc(sizeof(char) * 1);
-		s1[0] = '\0';
-	}
-	if (!s2)
+	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (!buffer)
 		return (NULL);
-	out = (char *)malloc(sizeof(char) * (ft_strlen_g(s1) + ft_strlen_g(s2) + 1));
-	if (out == NULL)
-		return (NULL);
-	i = 0;
-	j = 0;
-	while (s1[i])
-		out[j++] = s1[i++];
-	i = 0;
-	while (s2[i])
-		out[j++] = s2[i++];
-	out[j] = '\0';
-	free(s1);
-	return (out);
+	bytes_read = 1;
+	while ((ft_strchr_g(str, '\n') == 0) && bytes_read > 0)
+	{
+		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		if (bytes_read == -1)
+		{
+			free(str);
+			free(buffer);
+			return (NULL);
+		}
+		buffer[bytes_read] = '\0';
+		str = ft_strjoin_g(str, buffer);
+	}
+	free(buffer);
+	return (str);
 }
-
-//Reads a line from a file descriptor
-//--> returns a new str containing the line of text.
 
 char	*get_next_line(int fd)
 {
-	char		*line;
-	static char	*str;
+	char	*line;
 
 	if (BUFFER_SIZE <= 0 || fd < 0)
 		return (NULL);
-	str = ft_add_line(fd, str);
-	if (!str)
+	g_static_str = ft_add_line(fd, g_static_str);
+	if (!g_static_str)
 		return (NULL);
-	line = ft_next_line(str);
-	str = ft_remove_str_1st_line(str);
+	line = ft_next_line(g_static_str);
+	g_static_str = ft_remove_str_1st_line(g_static_str);
 	return (line);
 }
 
-/*int	main(void)
+char	**get_static_str(void)
 {
-	char	*str;
-	int		i;
-	int		fd;
+	return (&g_static_str);
+}
 
-	fd = open("../Tests/get_next_line/test.txt", O_RDONLY);
-	i = 1;
-	while (i < 8)
+void	free_gnl_static(void)
+{
+	char	**ptr;
+
+	ptr = get_static_str();
+	if (*ptr)
 	{
-		s = get_next_line(fd);
-		printf("line [%d]: %s", i, s);
-		free(s);
-		i++;
+		free(*ptr);
+		*ptr = NULL;
 	}
-	close(fd);
-	return (0);
-}*/
+}

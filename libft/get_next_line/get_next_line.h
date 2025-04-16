@@ -6,7 +6,7 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 14:16:31 by grohr             #+#    #+#             */
-/*   Updated: 2025/03/13 21:44:26 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/16 15:55:25 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,13 @@
 #  define BUFFER_SIZE 4242
 # endif
 
-size_t	ft_strlen_g(char *string);
-char	*ft_strchr_g(char *str, int c);
-char	*ft_strjoin_g(char *str1, char *str2);
+char	*get_next_line(int fd);
 char	*ft_add_line(int fd, char *str);
 char	*ft_next_line(char *str);
 char	*ft_remove_str_1st_line(char *line);
-char	*get_next_line(int fd);
+char	*ft_strjoin_g(char *s1, char *s2);
+char	*ft_strchr_g(char *str, int c);
+size_t	ft_strlen_g(char *str);
+void	free_gnl_static(void);
 
 #endif

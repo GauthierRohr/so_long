@@ -62,7 +62,6 @@ GNL =			get_next_line/get_next_line.c \
 
 SRCS = ${LIBC} ${ADD} ${BONUS} ${FTPRINTF} ${GNL}
 
-
 OBJ_DIR = obj
 OBJS = $(SRCS:%.c=$(OBJ_DIR)/%.o)
 
@@ -71,7 +70,9 @@ $(OBJ_DIR)/%.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 ${NAME}:	${OBJS}
-	ar -rsc ${NAME} ${OBJS}
+	@echo "Création de la bibliothèque \033[36m${NAME}\033[0m..."
+	@ar -rsc ${NAME} ${OBJS}
+	@echo "La bibliothèque \033[36m${NAME}\033[0m a été créée avec \033[32msuccès\033[0m !\n"
 
 all: 	${NAME}
 
