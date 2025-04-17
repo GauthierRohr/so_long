@@ -6,7 +6,7 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:20:00 by grohr             #+#    #+#             */
-/*   Updated: 2025/04/17 12:03:50 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/17 18:17:59 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,11 @@ static void	end_game(t_game *game)
 {
 	ft_printf("\n\033[32m=== FÉLICITATIONS ! ===\033[0m\n");
 	ft_printf("T'as fini le jeu en %d moves!\n", game->moves);
-	ft_printf("Les %d collectibles ont été ramassés.\n\n", game->collectibles);
+	if (game->collectibles == 1)
+		ft_printf("Le collectible a bien été ramassé.\n\n");
+	else
+		ft_printf("Les %d collectibles ont bien été ramassés.\n\n",
+			game->collectibles);
 	free_game(game);
 	exit(0);
 }

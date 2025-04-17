@@ -6,41 +6,16 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:17:44 by grohr             #+#    #+#             */
-/*   Updated: 2025/04/17 12:03:58 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/17 16:18:27 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/so_long.h"
 
-static int	count_lines(char *filename)
-{
-	int		fd;
-	int		count;
-	char	*line;
+// retire le \n inutile
+// check si 2 lignes ont une longueur differente : return si jamais
+// assigne a map[index] la ligne de map lue
 
-	fd = open(filename, O_RDONLY);
-	if (fd < 0)
-		return (ft_printf("Error\nCannot open file %s\n", filename), -1);
-	count = 0;
-	line = get_next_line(fd);
-	while (line != NULL)
-	{
-		count++;
-		free(line);
-		line = get_next_line(fd);
-	}
-	close(fd);
-	return (count);
-}
-
-// La ligne courante a été ajoutée à game->map,
-// donc on la considère dans le nettoyage.
-//
-// else if ((int)ft_strlen(trimmed) != game->map_width)
-// {
-// 	free_map(game);
-// 	return (0);
-// }
 static int	process_line(t_game *game, char *line, int i)
 {
 	char	*trimmed;
@@ -59,6 +34,11 @@ static int	process_line(t_game *game, char *line, int i)
 	}
 	return (1);
 }
+
+// lit le fichier ave gnl
+// assigne a une variable la ligne lue
+// /!\, il y a un \n en trop a la fin
+// met le NULL final au char** map
 
 static int	read_map_lines(int fd, t_game *game)
 {
@@ -81,19 +61,45 @@ static int	read_map_lines(int fd, t_game *game)
 	return (1);
 }
 
+// malloc la map jusqu'a fin de l'index de lignes
+// calcule avec count_lines (height)
+
 static int	allocate_map(t_game *game, int height)
 {
 	int	i;
 
 	game->map = (char **)malloc(sizeof(char *) * (height + 1));
 	if (!game->map)
-		return (ft_printf("Error\nMemory allocation failed\n"), 0);
+		return (ft_printf("Error\nMap memory allocation failed\n"), 0);
 	i = 0;
 	while (i <= height)
 		game->map[i++] = NULL;
 	game->map_height = height;
 	return (1);
 }
+
+static int	count_lines(char *filename)
+{
+	int		fd;
+	int		count;
+	char	*line;
+
+	fd = open(filename, O_RDONLY);
+	if (fd < 0)
+		return (ft_printf("Error\nCan't open map %s\n", filename), -1);
+	count = 0;
+	line = get_next_line(fd);
+	while (line != NULL)
+	{
+		count++;
+		free(line);
+		line = get_next_line(fd);
+	}
+	close(fd);
+	return (count);
+}
+
+// count_lines return -1 si on ne peut pas ouvrir le fichier map
 
 int	read_map(char *filename, t_game *game)
 {

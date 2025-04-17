@@ -6,11 +6,32 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:19:32 by grohr             #+#    #+#             */
-/*   Updated: 2025/04/16 17:28:07 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/17 17:13:13 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/so_long.h"
+
+void	free_copy(char **copy, int height)
+{
+	int	i;
+
+	if (!copy)
+		return ;
+	i = 0;
+	while (i < height)
+	{
+		if (copy[i])
+			free(copy[i]);
+		i++;
+	}
+	free(copy);
+}
+
+// On part de la position du joueur pour le flood fill
+// Donc si un collectible ou l'exit ne sont ps remplacees par 'F'
+// --> chemin inatteignable
+// On quitte alors le programme
 
 static int	check_reachable(char **map, t_game *game)
 {
@@ -44,7 +65,9 @@ static void	flood_fill(char **map, int x, int y, t_game *game)
 	flood_fill(map, x, y - 1, game);
 }
 
-//free_copy --> free.c
+// free_copy --> free.c
+// on copie juste la map pour faire un flood fill et check les paths
+
 char	**copy_map(t_game *game)
 {
 	char	**copy;
@@ -68,7 +91,6 @@ char	**copy_map(t_game *game)
 	return (copy);
 }
 
-//free_copy --> free.c
 int	check_path(t_game *game)
 {
 	char	**copy;

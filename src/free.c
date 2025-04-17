@@ -6,7 +6,7 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:17:30 by grohr             #+#    #+#             */
-/*   Updated: 2025/04/16 16:39:41 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/17 17:12:48 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,22 +16,6 @@ void	exit_error(char *message)
 {
 	ft_printf("%s\n", message);
 	exit(1);
-}
-
-void	free_copy(char **copy, int height)
-{
-	int	i;
-
-	if (!copy)
-		return ;
-	i = 0;
-	while (i < height)
-	{
-		if (copy[i])
-			free(copy[i]);
-		i++;
-	}
-	free(copy);
 }
 
 void	free_map(t_game *game)

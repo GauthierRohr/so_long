@@ -6,7 +6,7 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:17:03 by grohr             #+#    #+#             */
-/*   Updated: 2025/04/17 10:56:12 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/17 18:08:08 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,10 @@ static int	check_file_extension(char *filename)
 	return (1);
 }
 
-// Fonction pour gérer les erreurs et libérer la mémoire avant de quitter
 static void	handle_error(t_game *game, char *message)
 {
-	free_game(game);
+	if (game)
+		free_game(game);
 	exit_error(message);
 }
 
@@ -46,21 +46,21 @@ int	main(int argc, char **argv)
 	t_game	game;
 
 	if (argc != 2)
-		exit_error("Usage: ./so_long map.ber");
+		handle_error(NULL, "Error\nUsage: ./so_long map.ber");
 	if (!check_file_extension(argv[1]))
-		exit_error("Error\nFile must have .ber extension");
+		handle_error(NULL, "Error\nMap must have .ber extension : <map>.ber");
 	init_game(&game);
 	if (!read_map(argv[1], &game))
 		handle_error(&game, "Error\nFailed to read map");
 	if (!validate_map(&game))
-		handle_error(&game, "Error\nInvalid map");
+		handle_error(&game, "Error\nInvalid components or structure");
 	if (!check_path(&game))
 		handle_error(&game, "Error\nNo valid path");
 	if (!init_window(&game))
 		handle_error(&game, "Error\nFailed to initialize window");
 	if (!init_images(&game))
 		handle_error(&game, "Error\nFailed to initialize images");
-	render_full_game(&game);
+	render_game(&game);
 	ft_printf("\n\n\n");
 	setup_hooks(&game);
 	mlx_loop(game.mlx);

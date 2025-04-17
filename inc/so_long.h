@@ -6,7 +6,7 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 12:00:00 by user42            #+#    #+#             */
-/*   Updated: 2025/04/17 10:59:30 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/17 17:52:56 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include <stdlib.h>
 # include <unistd.h>
-# include <fcntl.h>
+# include <fcntl.h> //open / O_RDONLY
 # include "../minilibx-linux/mlx.h"
 # include "../libft/libft.h"
 
@@ -65,13 +65,13 @@ typedef struct s_game
 	int		map_height;
 	int		player_x;
 	int		player_y;
+	int		exit_x;
+	int		exit_y;
 	int		player_count;
 	int		exit_count;
 	int		collectibles;
 	int		collected;
 	int		moves;
-	int		exit_x;
-	int		exit_y;
 	t_img	wall;
 	t_img	player;
 	t_img	collectible;
@@ -85,7 +85,6 @@ int		close_game(t_game *game);
 
 // free.c
 void	exit_error(char *message);
-void	free_copy(char **copy, int height);
 void	free_map(t_game *game);
 void	free_game(t_game *game);
 
@@ -108,6 +107,7 @@ int		read_map(char *filename, t_game *game);
 int		validate_map(t_game *game);
 
 //path_finder.c
+void	free_copy(char **copy, int height);
 int		check_path(t_game *game);
 char	**copy_map(t_game *game);
 
@@ -115,8 +115,8 @@ char	**copy_map(t_game *game);
 int		move_player(t_game *game, int new_x, int new_y);
 
 // render.c
-void render_game(t_game *game);
-void render_full_game(t_game *game);
-void render_tile(t_game *game, t_img *img, int x, int y); 
+void	render_game(t_game *game);
+void	render_full_game(t_game *game);
+void	render_tile(t_game *game, t_img *img, int x, int y);
 
 #endif
