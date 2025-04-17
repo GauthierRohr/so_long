@@ -6,7 +6,7 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:17:03 by grohr             #+#    #+#             */
-/*   Updated: 2025/04/16 16:33:39 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/17 10:56:12 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int	main(int argc, char **argv)
 		handle_error(&game, "Error\nFailed to initialize window");
 	if (!init_images(&game))
 		handle_error(&game, "Error\nFailed to initialize images");
-	render_game(&game);
+	render_full_game(&game);
 	ft_printf("\n\n\n");
 	setup_hooks(&game);
 	mlx_loop(game.mlx);

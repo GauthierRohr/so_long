@@ -6,7 +6,7 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:17:44 by grohr             #+#    #+#             */
-/*   Updated: 2025/04/16 18:28:09 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/17 12:03:58 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static int	count_lines(char *filename)
 
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
-		return (ft_printf("Error: Cannot open file %s\n", filename), -1);
+		return (ft_printf("Error\nCannot open file %s\n", filename), -1);
 	count = 0;
 	line = get_next_line(fd);
 	while (line != NULL)
@@ -31,20 +31,6 @@ static int	count_lines(char *filename)
 	}
 	close(fd);
 	return (count);
-}
-
-static int	allocate_map(t_game *game, int height)
-{
-	int	i;
-
-	game->map = (char **)malloc(sizeof(char *) * (height + 1));
-	if (!game->map)
-		return (ft_printf("Error: Memory allocation failed\n"), 0);
-	i = 0;
-	while (i <= height)
-		game->map[i++] = NULL;
-	game->map_height = height;
-	return (1);
 }
 
 // La ligne courante a été ajoutée à game->map,
@@ -88,11 +74,24 @@ static int	read_map_lines(int fd, t_game *game)
 			free_gnl_static();
 			return (0);
 		}
-			
 		i++;
 		line = get_next_line(fd);
 	}
 	game->map[i] = NULL;
+	return (1);
+}
+
+static int	allocate_map(t_game *game, int height)
+{
+	int	i;
+
+	game->map = (char **)malloc(sizeof(char *) * (height + 1));
+	if (!game->map)
+		return (ft_printf("Error\nMemory allocation failed\n"), 0);
+	i = 0;
+	while (i <= height)
+		game->map[i++] = NULL;
+	game->map_height = height;
 	return (1);
 }
 
@@ -104,13 +103,15 @@ int	read_map(char *filename, t_game *game)
 	height = count_lines(filename);
 	if (height <= 0)
 		return (0);
+	if (height < 3)
+		return (ft_printf("Error\nMap too small\n"), 0);
 	if (!allocate_map(game, height))
 		return (0);
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
 	{
 		free_map(game);
-		return (ft_printf("Error: Cannot open file %s\n", filename), 0);
+		return (ft_printf("Error\nCannot open file %s\n", filename), 0);
 	}
 	if (!read_map_lines(fd, game))
 	{

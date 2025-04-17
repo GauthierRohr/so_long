@@ -6,7 +6,7 @@
 /*   By: grohr <grohr@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 12:00:00 by user42            #+#    #+#             */
-/*   Updated: 2025/04/16 16:40:34 by grohr            ###   ########.fr       */
+/*   Updated: 2025/04/17 10:59:30 by grohr            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,8 @@ char	**copy_map(t_game *game);
 int		move_player(t_game *game, int new_x, int new_y);
 
 // render.c
-void	render_game(t_game *game);
-void	render_tile(t_game *game, t_img *img, int x, int y);
+void render_game(t_game *game);
+void render_full_game(t_game *game);
+void render_tile(t_game *game, t_img *img, int x, int y); 
 
 #endif
